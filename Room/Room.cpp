@@ -26,8 +26,8 @@ Room::Room(QWidget *parent)
     qint64 pId1= proc1->processId();
     pid1 = QString::number(pId1);
     
-    ui->call = new QSound("door.wav");
-    ui->door = new QSound("door.wav");
+    ui->call = new QSound("../sounds/door.wav");
+    ui->door = new QSound("../sounds/door.wav");
     _instance = new VlcInstance(VlcCommon::args(), this);
     _player = new VlcMediaPlayer(_instance);
     _player->setVideoWidget(ui->video);
@@ -174,7 +174,7 @@ void Room::openDoor()
     QProcess *pKill2 = new QProcess();
     pKill2->start("kill -9 "+ pid1 );
     ui->txtInput->setText("Opened");
-    ui->txtInput->setText(line);
+    
     _player->stop();
     QByteArray  arrBlock;
     QDataStream out(&arrBlock, QIODevice::WriteOnly);

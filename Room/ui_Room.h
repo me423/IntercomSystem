@@ -91,7 +91,7 @@ public:
 
         Room->setCentralWidget(centralwidget);
         txtInfo->setVisible(false);
-        //txtInput->setVisible(false);
+        txtInput->setVisible(false);
 
         
 

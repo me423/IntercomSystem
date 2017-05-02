@@ -38,6 +38,7 @@ private:
     QPushButton* resh;
     QPushButton* clear;
     QSound *opened;
+    QSound *dtmf;
     QMediaPlayer *player;
 
 public:

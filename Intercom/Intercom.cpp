@@ -15,7 +15,7 @@ Intercom::Intercom(const QString& strHost,
     player->play();*/
     centralwidget = new QWidget();
     centralwidget->setObjectName(QStringLiteral("centralwidget"));
-    opened = new QSound("opened.wav");
+    opened = new QSound("../sounds/opened.wav");
     //opened->play();
     first= new QPushButton("&1");
     second= new QPushButton("&2");
@@ -76,6 +76,7 @@ Intercom::Intercom(const QString& strHost,
     gridLayout = new QGridLayout(centralwidget);
     gridLayout->setObjectName(QStringLiteral("gridLayout"));
     gridLayout->addWidget(m_ptxtInput,0,0,1,4);
+    m_ptxtInput->setReadOnly(true);
 
     gridLayout->addWidget(first,1,0,1,2);
     gridLayout->addWidget(second,1,2,1,1);
@@ -201,6 +202,8 @@ void Intercom::slotOpen(){
 }
 void Intercom::fst()
 {
+    dtmf = new QSound("../sounds/1.wav");
+    dtmf->play();
     m_ptxtInput->setText(m_ptxtInput->text()+"1");
 }
 
@@ -210,36 +213,52 @@ void Intercom::snd()
     player->setMedia(QUrl("http://127.0.0.1:1234/test.mp3"));
     player->setVolume(100);
     player->play();*/
+    dtmf = new QSound("../sounds/2.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"2");
 }
 void Intercom::thd()
 {
+    dtmf = new QSound("../sounds/3.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"3");
 }
 void Intercom::fth()
 {
+    dtmf = new QSound("../sounds/4.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"4");
 }
 void Intercom::ffth()
 {
+    dtmf = new QSound("../sounds/5.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"5");
 }
 void Intercom::sth()
 {
+    dtmf = new QSound("../sounds/6.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"6");
 }
 void Intercom::snth()
 {
+    dtmf = new QSound("../sounds/7.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"7");
 }
 void Intercom::eth()
 {
+    dtmf = new QSound("../sounds/8.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"8");
 }
 
 
 void Intercom::nth()
 {
+    dtmf = new QSound("../sounds/9.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"9");
 }
 void Intercom::staar()
@@ -248,6 +267,8 @@ void Intercom::staar()
 }
 void Intercom::zeero()
 {
+    dtmf = new QSound("../sounds/0.wav");
+    dtmf->play();
      m_ptxtInput->setText(m_ptxtInput->text()+"0");
 }
 
