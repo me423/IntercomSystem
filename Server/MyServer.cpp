@@ -88,6 +88,15 @@ void MyServer::slotReadClient()
         m_ptxt->append(strMessage);
 
         m_nNextBlockSize = 0;
+        bool ok;
+        str.toInt(&ok,10);
+        if((str.toInt()>listClients.length()-1 || str.toInt() <= 0 ) && ok == true	  ){
+        	sendToClient(listClients.at(0),
+
+                     "Null"
+                    );
+        	break;
+        }
 
         if(pClientSocket == listClients.at(0) )
         {

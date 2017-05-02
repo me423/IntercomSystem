@@ -20,6 +20,7 @@ private:
     QTextEdit *m_ptxtInfo;
     QLineEdit *m_ptxtInput;
     quint16     m_nNextBlockSize;
+    qint32 flag;
     QString pid;
     QProcess *proc = new QProcess();
     QProcess *kill	 = new QProcess();

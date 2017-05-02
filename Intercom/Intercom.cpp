@@ -9,6 +9,7 @@ Intercom::Intercom(const QString& strHost,
                   ) : QWidget(pwgt)
                     , m_nNextBlockSize(0)
 {
+    flag=0;
     /*player = new QMediaPlayer(this);
     player->setMedia(QUrl("http://127.0.0.1:1234/test.mp3"));
     player->setVolume(100);
@@ -32,8 +33,22 @@ Intercom::Intercom(const QString& strHost,
     clear = new QPushButton("&C");
 
     m_pTcpSocket = new QTcpSocket(this);
+     QFile fileIntercom("../intercom.conf"); // создаем объект класса QFile
+    if(!fileRoom.open(QIODevice::ReadOnly)) {
+        ui->txtInput->setText(fileRoom.errorString());
+    }
 
-    m_pTcpSocket->connectToHost(strHost, nPort);
+    QTextStream in(&fileRoom);
+     QString line;
+    while(!in.atEnd()) {
+        line = in.readLine();    
+        QStringList fields = line.split(",");    
+            
+    }
+
+    fileRoom.close();
+
+    m_pTcpSocket->connectToHost(QUrl(line), 8082);
     connect(m_pTcpSocket, SIGNAL(connected()), SLOT(slotConnected()));
     connect(m_pTcpSocket, SIGNAL(readyRead()), SLOT(slotReadyRead()));
     connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
@@ -135,6 +150,13 @@ void Intercom::slotReadyRead()
         if(str=="Opened"){
             opened->play();
         }
+        
+        if(str=="Null"){
+            m_ptxtInput->setText("The room you entered does not exist!");
+            proc->kill();
+            break;
+        }
+
 
         m_ptxtInfo->append(time.toString() + " " + str);
         m_nNextBlockSize = 0;
@@ -155,34 +177,49 @@ void Intercom::slotError(QAbstractSocket::SocketError err)
 }
 void Intercom::slotSendToServer()
 {
-    QByteArray  arrBlock;
-    QDataStream out(&arrBlock, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_2);
-    out << quint16(0) << QTime::currentTime() << m_ptxtInput->text();
-
-    out.device()->seek(0);
-    out << quint16(arrBlock.size() - sizeof(quint16));
     
+        QByteArray  arrBlock;
+        QDataStream out(&arrBlock, QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_2);
+        out << quint16(0) << QTime::currentTime() << m_ptxtInput->text();
+
+        out.device()->seek(0);
+        out << quint16(arrBlock.size() - sizeof(quint16));
+        
+        
+
+        proc->start("cvlc v4l2:///dev/video0 :v4l2-standard= :input-slave=alsa://hw:0,0 :live-caching=300 :sout=\"#transcode{vcodec=WMV2,vb=800,scale=1,acodec=wma2,ab=128,channels=2,samplerate=44100}:http{dst=:8080/stream.wmv}\"");
+        QFile fileAudio("../ipaudio.conf"); // создаем объект класса QFile
+        if(!fileAudio.open(QIODevice::ReadOnly)) {
+            //ui->txtInput->setText(file.errorString());
+        }
+
+        QTextStream in(&fileAudio);
+         QString line;
+        while(!in.atEnd()) {
+            line = in.readLine();    
+            QStringList fields = line.split(",");    
+                
+        }
+
+        fileAudio.close();
+        player = new QMediaPlayer(this);
+        player->setMedia(QUrl(line));
+        player->setVolume(100);
+        player->play();
+        m_pTcpSocket->write(arrBlock);
+        qint64 pId= proc->processId();
+        pid = QString::number(pId);
+        //m_ptxtInput->setText(pid);
+        QFile file("../pid.conf");
+        QTextStream cout(&file);
+        if(file.open(QIODevice::WriteOnly))
+        {
+              cout<<pId;
+        }
+     
+        file.close();
     
-
-    proc->start("cvlc v4l2:///dev/video0 :v4l2-standard= :input-slave=alsa://hw:0,0 :live-caching=300 :sout=\"#transcode{vcodec=WMV2,vb=800,scale=1,acodec=wma2,ab=128,channels=2,samplerate=44100}:http{dst=:8080/stream.wmv}\"");
-
-    player = new QMediaPlayer(this);
-    player->setMedia(QUrl("http://127.0.0.1:1234/test.mp3"));
-    player->setVolume(100);
-    player->play();
-    m_pTcpSocket->write(arrBlock);
-    qint64 pId= proc->processId();
-    pid = QString::number(pId);
-    //m_ptxtInput->setText(pid);
-    QFile file("../pid.conf");
-    QTextStream cout(&file);
-    if(file.open(QIODevice::WriteOnly))
-    {
-          cout<<pId;
-    }
- 
-    file.close();
 }
 void Intercom::slotConnected()
 {

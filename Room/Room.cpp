@@ -40,8 +40,22 @@ Room::Room(QWidget *parent)
     
     m_nNextBlockSize = 0;
     m_pTcpSocket = new QTcpSocket(this);
+    QFile fileRoom("../room.conf"); // создаем объект класса QFile
+    if(!fileRoom.open(QIODevice::ReadOnly)) {
+        ui->txtInput->setText(fileRoom.errorString());
+    }
 
-    m_pTcpSocket->connectToHost("localhost", 8082);
+    QTextStream in(&fileRoom);
+     QString line;
+    while(!in.atEnd()) {
+        line = in.readLine();    
+        QStringList fields = line.split(",");    
+            
+    }
+
+    fileRoom.close();
+
+    m_pTcpSocket->connectToHost(QUrl(line), 8082);
     
  
     connect(m_pTcpSocket, SIGNAL(connected()), SLOT(slotConnected()));
@@ -136,9 +150,22 @@ void Room::answer()
 
     if (url.isEmpty())
         return;*/
-    
+    QFile file("../ipvideo.conf"); // создаем объект класса QFile
+    if(!file.open(QIODevice::ReadOnly)) {
+        ui->txtInput->setText(file.errorString());
+    }
+
+    QTextStream in(&file);
+     QString line;
+    while(!in.atEnd()) {
+        line = in.readLine();    
+        QStringList fields = line.split(",");    
+            
+    }
+
+    file.close();
     ui->call->stop();
-    _media = new VlcMedia("http://localhost:8080/stream.wmv", _instance);
+    _media = new VlcMedia(line, _instance);
 
     _player->open(_media);
     
